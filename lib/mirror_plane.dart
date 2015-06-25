@@ -1,59 +1,56 @@
-part of realm;
+part of plato;
 
-Realm get currentRealm => new Realm(currentMirrorSystem());
+MirrorPlane get currentMirrorPlane => new MirrorPlane(currentMirrorSystem());
 
-Iterable<DeclarationMirror> declarations() => currentRealm
+Iterable<DeclarationMirror> declarations() => currentMirrorPlane
 .declarations();
 
-DeclarationMirror declaration(Symbol symbol) => currentRealm
+DeclarationMirror declaration(Symbol symbol) => currentMirrorPlane
 .declaration(symbol);
 
-Iterable<ClassMirror> classes() => currentRealm
+Iterable<ClassMirror> classes() => currentMirrorPlane
 .classes();
 
-ClassMirror classMirror(Symbol symbol) => currentRealm
+ClassMirror classMirror(Symbol symbol) => currentMirrorPlane
 .classMirror(symbol);
 
-Iterable<MethodMirror> methods() => currentRealm
+Iterable<MethodMirror> methods() => currentMirrorPlane
 .methods();
 
-MethodMirror method(Symbol global, [Symbol method]) => currentRealm
+MethodMirror method(Symbol global, [Symbol method]) => currentMirrorPlane
 .method(global, method);
 
-Iterable<VariableMirror> variables() => currentRealm
+Iterable<VariableMirror> variables() => currentMirrorPlane
 .variables();
 
-VariableMirror variable(Symbol symbol) => currentRealm
+VariableMirror variable(Symbol symbol) => currentMirrorPlane
 .variable(symbol);
 
-InstanceMirror instance(Symbol symbol) => currentRealm
+InstanceMirror instance(Symbol symbol) => currentMirrorPlane
 .instance(symbol);
 
-ClosureMirror closure(Symbol symbol) => currentRealm
+ClosureMirror closure(Symbol symbol) => currentMirrorPlane
 .closure(symbol);
 
-TypeMirror type(Symbol symbol) => currentRealm
+TypeMirror type(Symbol symbol) => currentMirrorPlane
 .type(symbol);
 
-Iterable annotations(Symbol symbol) => currentRealm
+Iterable annotations(Symbol symbol) => currentMirrorPlane
 .annotations(symbol);
 
 instantiate(ClassMirror classMirror,
             [List positionalArguments = const [],
             Map<Symbol, dynamic> namedArguments = const {},
-            Symbol constructor = const Symbol('')]) => currentRealm
+            Symbol constructor = const Symbol('')]) => currentMirrorPlane
 .instantiate(classMirror, positionalArguments, namedArguments, constructor);
 
 apply(Symbol function,
       [List positionalArguments = const [],
-      Map<Symbol, dynamic> namedArguments = const {}]) => currentRealm
+      Map<Symbol, dynamic> namedArguments = const {}]) => currentMirrorPlane
 .apply(function, positionalArguments, namedArguments);
 
-trace(String path) => currentRealm
-.trace(path);
-
-abstract class Realm {
-  factory Realm(MirrorSystem system) => new _Realm(system);
+abstract class MirrorPlane {
+  factory MirrorPlane(MirrorSystem system) => new _MirrorPlane(system);
 
   Iterable<DeclarationMirror> declarations();
 
@@ -87,14 +84,12 @@ abstract class Realm {
   apply(Symbol function,
         [List positionalArguments,
         Map<Symbol, dynamic> namedArguments]);
-
-  trace(String path);
 }
 
-class _Realm implements Realm {
+class _MirrorPlane implements MirrorPlane {
   MirrorSystem _system;
 
-  _Realm(MirrorSystem this._system);
+  _MirrorPlane(MirrorSystem this._system);
 
   Iterable<DeclarationMirror> declarations() {
     return _system.libraries.values
@@ -189,25 +184,5 @@ class _Realm implements Realm {
         [List positionalArguments = const [],
         Map<Symbol, dynamic> namedArguments]) {
     return closure(function).apply(positionalArguments, namedArguments).reflectee;
-  }
-
-  trace(String path) {
-    var segments = path.split('.');
-
-    if (segments.length == 1) return _trace(path);
-
-    var explicitLibrary = _system.findLibrary(new Symbol(segments[0]));
-    if (explicitLibrary != null
-    && explicitLibrary.declarations.containsKey(new Symbol(segments[1]))) {
-      return _trace('${segments.removeAt(0)}.${segments.removeAt(1)}', segments);
-    }
-  }
-
-  _trace(String startingDeclaration, [List<String> segments]) {
-    var pointer = instance(new Symbol(startingDeclaration));
-    for (var segment in segments) {
-      pointer = pointer.getField(new Symbol(segment));
-    }
-    return pointer.reflectee;
   }
 }

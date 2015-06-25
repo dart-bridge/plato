@@ -1,8 +1,8 @@
-name: realm
+name: plato
 version: 0.1.0
 description: Dynamic interaction with MirrorSystem made simple
 author: Emil Persson <emil.n.persson@gmail.com>
-homepage: https://github.com/https://github.com/dart-bridge/realm
+homepage: https://github.com/https://github.com/dart-bridge/plato
 environment:
   sdk: ">=1.8.0 <2.0.0"
 dev_dependencies:
