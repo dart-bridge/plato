@@ -148,8 +148,6 @@ class _MirrorPlane implements MirrorPlane {
   }
 
   InstanceMirror _instance(LibraryMirror library, Symbol symbol) {
-      print(library);
-      print(symbol);
     try {
       return library.getField(symbol);
     } catch (e) {
